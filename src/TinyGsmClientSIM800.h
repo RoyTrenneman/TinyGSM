@@ -584,6 +584,14 @@ TINY_GSM_MODEM_WAIT_FOR_NETWORK()
     return waitResponse(60000L) == 1;
   }
 
+  void receiveSMS() {
+    sendAT(GF("+CMGF=1")); // Configuring TEXT mode
+    waitResponse();
+    waitResponse();
+    sendAT(GF("+CNMI=2,2,0,0,0")); // Decides how newly arrived SMS
+    waitResponse();
+  }
+  
   bool sendSMS_UTF16(const String& number, const void* text, size_t len) {
     sendAT(GF("+CMGF=1"));
     waitResponse();
