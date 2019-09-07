@@ -587,7 +587,6 @@ TINY_GSM_MODEM_WAIT_FOR_NETWORK()
   void receiveSMS() {
     sendAT(GF("+CMGF=1")); // Configuring TEXT mode
     waitResponse();
-    waitResponse();
     sendAT(GF("+CNMI=2,2,0,0,0")); // Decides how newly arrived SMS
     waitResponse();
   }
