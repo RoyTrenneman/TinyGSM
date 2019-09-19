@@ -567,7 +567,19 @@ TINY_GSM_MODEM_WAIT_FOR_NETWORK()
       return hex;
     }
   }
-
+ bool sendFlashSMS(const String& Hexa, size_t len) {
+   sendAT(GF("+CMGF=0")); // Mode PDU (see https://weekly-geekly.github.io/articles/364643/index.html)
+   waitResponse();
+   sendAT(GF("+CMGS="),len, GF("\r")); // Take a look at http://rednaxela.net/pdu.php to convert from text to PDU
+    if (waitResponse(GF(">")) != 1) {  // dont forget to set Class 0 !
+          return false;         
+   }
+   stream.print(Hexa);
+   stream.write((char)0x1A);
+   stream.flush();
+   return waitResponse(60000L) == 1;
+ }
+                       
   bool sendSMS(const String& number, const String& text) {
     sendAT(GF("+CMGF=1"));
     waitResponse();
@@ -588,6 +600,8 @@ TINY_GSM_MODEM_WAIT_FOR_NETWORK()
     sendAT(GF("+CMGF=1")); // Configuring TEXT mode
     waitResponse();
     sendAT(GF("+CNMI=2,2,0,0,0")); // Decides how newly arrived SMS
+    waitResponse();
+    sendAT(GF("+CMGDA=\"DEL ALL\"")); // DEL ALL message in mem storage
     waitResponse();
   }
   
